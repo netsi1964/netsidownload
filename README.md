@@ -52,7 +52,7 @@ import NetsiDownload from "https://esm.sh/netsi-download";
   >&darr; Download SVG</netsi-download
 >
 
-<svg id="mySvg" ...><circle cx="100" cy="100" fill="orange" /></svg>
+<svg id="mySvg"><circle cx="100" cy="100" r="20" fill="orange" /></svg>
 
 <script>
   function downloadCallback() {
