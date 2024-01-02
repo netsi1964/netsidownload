@@ -1,0 +1,17 @@
+{
+  "name": "netsidownload",
+  "version": "0.0.1",
+  "description": "A download HTML custom element",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "HTML",
+    "Custom",
+    "Element",
+    "Download"
+  ],
+  "author": "Sten Hougaard",
+  "license": "Apache-2.0"
+}
