@@ -42,8 +42,10 @@ Use the netsi-download tag in your HTML, and specify the data attribute with the
 
 ## Example
 
+There is an example at [codepen](https://codepen.io/netsi1964/pen/eYXpLvo)
+
 ```html
-import NetsiDownload from "https://esm.sh/netsi-download";
+import NetsiDownload from "https://esm.sh/netsidownload";
 
 <netsi-download
   data="mySvg"
