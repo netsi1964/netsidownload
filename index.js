@@ -1,6 +1,6 @@
 class NetsiDownload extends HTMLElement {
   static get observedAttributes() {
-    return ["data", "mime-type", "ondownloaded"];
+    return ["data", "mime-type", "ondownloaded", "filename"];
   }
 
   constructor() {
@@ -13,6 +13,7 @@ class NetsiDownload extends HTMLElement {
             </style>
             <slot></slot>
         `;
+    this.getDataAndSetDefaultValues.bind(this);
   }
 
   connectedCallback() {
@@ -23,33 +24,48 @@ class NetsiDownload extends HTMLElement {
     this.removeEventListener("click", this.downloadData);
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    // Handle attribute changes if necessary
-  }
-
   downloadData = () => {
-    const dataId = this.getAttribute("data");
-    const mimeType = this.getAttribute("mime-type") || "image/svg+xml";
-    const dataElement = document.getElementById(dataId);
-    if (!dataElement) {
-      console.error("Data element not found");
-      return;
-    }
+    const dataString = this.getDataAndSetDefaultValues();
 
-    const serializer = new XMLSerializer();
-    const dataString = serializer.serializeToString(dataElement);
+    const mimeType = this.getAttribute("mime-type") || this.defaultMimeType;
+    const filename = this.getAttribute("filename") || this.defaultFilename;
     const blob = new Blob([dataString], { type: mimeType });
 
-    const downloadLink = document.createElement("a");
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = `${dataId}.svg`;
-    downloadLink.style.display = "none";
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
 
     this.triggerDownloadCallback();
   };
+
+  getDataAndSetDefaultValues() {
+    let data = this.getAttribute("data");
+    this.defaultFilename = "data.txt";
+    this.defaultMimeType = "text/plain";
+    try {
+      const element = document.querySelector(data);
+      const tagName = element.tagName.toLowerCase();
+
+      data = element.outerHTML;
+      if (element.namespaceURI === "http://www.w3.org/2000/svg") {
+        this.defaultFilename = "svg.svg";
+        this.defaultMimeType = "image/svg+xml";
+      } else {
+        if (tagName === "textarea" || "value" in element) {
+          this.defaultFilename = "value.txt";
+          data = "value" in element ? element.value : element.textContent;
+        } else {
+          this.defaultFilename = "data.html";
+          this.defaultMimeType = "text/html";
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    return data;
+  }
 
   triggerDownloadCallback() {
     const downloadCallback = this.getAttribute("ondownloaded");
